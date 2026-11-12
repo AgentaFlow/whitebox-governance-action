@@ -1,0 +1,39 @@
+name: 'WhiteBoxXAI Governance'
+description: 'Sync a whitebox.yaml model-release policy to WhiteBoxXAI and fail the job when a model is blocked.'
+author: 'AgentaFlow'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  api_key:
+    description: 'WhiteBoxXAI API key. Pass it from a repository secret.'
+    required: true
+  policy_file:
+    description: 'Path to the policy file, relative to the workspace.'
+    required: false
+    default: 'whitebox.yaml'
+  sync:
+    description: 'Whether to sync the policy file before evaluating. Set to false on pull requests so an unmerged branch cannot change the policy in force.'
+    required: false
+    default: 'true'
+  model_id:
+    description: 'Model id to evaluate against the policy. Leave empty to only sync.'
+    required: false
+    default: ''
+  base_url:
+    description: 'API address. Defaults to the WHITEBOX_BASE_URL environment variable, then https://api.whiteboxxai.com. Set it for a Business Cloud tenant.'
+    required: false
+    default: ''
+
+outputs:
+  action:
+    description: 'pass, warn or block. Empty when no model was evaluated.'
+  allowed:
+    description: 'true unless the result is block. Empty when no model was evaluated.'
+  violations:
+    description: 'The violations as a JSON array of {policy_rule, action, detail}. Empty when no model was evaluated.'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
